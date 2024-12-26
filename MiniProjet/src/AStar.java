@@ -2,8 +2,15 @@ import java.util.*;
 
 public class AStar {
 
-    // Trouver le chemin le plus court entre deux cellules
+    /**
+     * Trouver le chemin le plus court entre deux cellules dans un graphe en utilisant A*.
+     * @param graphe Le graphe représentant le labyrinthe.
+     * @param depart La cellule de départ.
+     * @param arrivee La cellule d'arrivée.
+     * @return Une liste des cellules formant le chemin le plus court, ou une liste vide si aucun chemin n'existe.
+     */
     public List<Cell> trouverChemin(Graphe graphe, Cell depart, Cell arrivee) {
+        // Initialisation de la file de priorité et des scores
         PriorityQueue<Cell> openSet = new PriorityQueue<>(Comparator.comparingDouble(Cell::getCoutTotal));
         Set<Cell> closedSet = new HashSet<>();
         Map<Cell, Double> gScore = new HashMap<>(); // Coût actuel pour chaque cellule
@@ -18,7 +25,6 @@ public class AStar {
             // Extraire la cellule avec le plus faible coût total (g + h)
             Cell courant = openSet.poll();
 
-            // Si nous avons atteint la cellule d'arrivée, reconstruire le chemin
             if (courant.equals(arrivee)) {
                 return reconstruireChemin(parents, arrivee);
             }
@@ -28,13 +34,13 @@ public class AStar {
             // Explorer les voisins
             for (Cell voisin : graphe.getVoisins(courant)) {
                 if (closedSet.contains(voisin)) {
-                    continue; // Ignorer les voisins déjà explorés
+                    continue;
                 }
 
-                double tentativeGScore = gScore.getOrDefault(courant, Double.POSITIVE_INFINITY) + 1; // Coût d'une cellule à son voisin
+                double tentativeGScore = gScore.getOrDefault(courant, Double.POSITIVE_INFINITY) + graphe.getCout(courant, voisin);
 
                 if (tentativeGScore < gScore.getOrDefault(voisin, Double.POSITIVE_INFINITY)) {
-                    // Mettre à jour les scores et le parent du voisin
+                    // Mise à jour des parents et des scores
                     parents.put(voisin, courant);
                     gScore.put(voisin, tentativeGScore);
                     voisin.setHeuristique(calculerHeuristique(voisin, arrivee));
@@ -46,7 +52,7 @@ public class AStar {
             }
         }
 
-        // Retourner une liste vide si aucun chemin n'est trouvé
+        // Aucun chemin trouvé
         return new ArrayList<>();
     }
 
@@ -65,7 +71,7 @@ public class AStar {
             courant = parents.get(courant);
         }
 
-        Collections.reverse(chemin); // Inverser pour obtenir le chemin dans le bon ordre
+        Collections.reverse(chemin);
         return chemin;
     }
 }

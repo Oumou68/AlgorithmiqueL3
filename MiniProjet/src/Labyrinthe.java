@@ -56,13 +56,13 @@ public class Labyrinthe {
     private void construireGraphe() {
         boolean entreeAjoutee = false;
         boolean sortieAjoutee = false;
-
+    
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 Cell cell = grid[row][col];
                 if (!cell.isWall()) {
                     graphe.ajouterNoeud(cell);
-
+    
                     // Vérifier si la cellule est l'entrée ou la sortie
                     if (cell.isStart()) {
                         System.out.println("Cellule d'entrée détectée : " + cell);
@@ -72,24 +72,26 @@ public class Labyrinthe {
                         System.out.println("Cellule de sortie détectée : " + cell);
                         sortieAjoutee = true;
                     }
-
-                    // Ajouter les voisins
+    
+                    // Ajouter les voisins avec un poids par défaut (par exemple, 1.0)
+                    double poidsParDefaut = 1.0;
+    
                     if (row > 0 && !grid[row - 1][col].isWall())
-                        graphe.ajouterArete(cell, grid[row - 1][col]);
+                        graphe.ajouterArete(cell, grid[row - 1][col], poidsParDefaut);
                     if (row < height - 1 && !grid[row + 1][col].isWall())
-                        graphe.ajouterArete(cell, grid[row + 1][col]);
+                        graphe.ajouterArete(cell, grid[row + 1][col], poidsParDefaut);
                     if (col > 0 && !grid[row][col - 1].isWall())
-                        graphe.ajouterArete(cell, grid[row][col - 1]);
+                        graphe.ajouterArete(cell, grid[row][col - 1], poidsParDefaut);
                     if (col < width - 1 && !grid[row][col + 1].isWall())
-                        graphe.ajouterArete(cell, grid[row][col + 1]);
+                        graphe.ajouterArete(cell, grid[row][col + 1], poidsParDefaut);
                 }
             }
         }
-
+    
         if (!entreeAjoutee || !sortieAjoutee) {
             throw new IllegalStateException("L'entrée (S) ou la sortie (E) n'a pas été ajoutée au graphe !");
         }
-    }
+    }    
 
     public void displayLabyrinthe() {
         for (int i = 0; i < height; i++) {
