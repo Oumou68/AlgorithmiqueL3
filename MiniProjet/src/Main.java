@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,7 +9,7 @@ public class Main {
 
     private static void testLabyrintheDepuisFichier() {
         // Charger le labyrinthe depuis un fichier
-        Labyrinthe labyrinthe = new Labyrinthe("MiniProjet/labComplexe.txt");
+        Labyrinthe labyrinthe = new Labyrinthe("MiniProjet/labyrinthes/labyrinthe.txt");
 
         // Afficher la grille du labyrinthe
         System.out.println("Grille du labyrinthe :");
@@ -21,12 +22,31 @@ public class Main {
         System.out.println("\nGraphe du labyrinthe :");
         graphe.afficherGraphe();
 
-        // Résoudre le labyrinthe avec l'algorithme A*
-        AStar aStar = new AStar();
+        // Sélection de l'heuristique
+        Scanner scanner = new Scanner(System.in);
+        AStar.Heuristique choixHeuristique = null;
+
+        System.out.println("\nVeuillez choisir l'heuristique pour A* :");
+        System.out.println("1 - Manhattan");
+        System.out.println("2 - Euclidienne");
+        System.out.print("Votre choix : ");
+        int choix = scanner.nextInt();
+
+        if (choix == 1) {
+            choixHeuristique = AStar.Heuristique.MANHATTAN;
+        } else if (choix == 2) {
+            choixHeuristique = AStar.Heuristique.EUCLIDIENNE;
+        } else {
+            System.out.println("Choix invalide. Utilisation de l'heuristique Manhattan par défaut.");
+            choixHeuristique = AStar.Heuristique.MANHATTAN;
+        }
+
+        // Résoudre le labyrinthe avec l'algorithme A* et l'heuristique choisie
+        AStar aStar = new AStar(choixHeuristique);
         Cell entree = labyrinthe.getEntree(); // Cellule de départ
         Cell sortie = labyrinthe.getSortie(); // Cellule de sortie
 
-        System.out.println("\nRésolution du labyrinthe avec A* :");
+        System.out.println("\nRésolution du labyrinthe avec A* (" + choixHeuristique + ") :");
         List<Cell> chemin = aStar.trouverChemin(graphe, entree, sortie);
 
         // Afficher le chemin trouvé

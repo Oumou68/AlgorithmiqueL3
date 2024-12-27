@@ -2,6 +2,19 @@ import java.util.*;
 
 public class AStar {
 
+    // Enum pour choisir l'heuristique
+    public enum Heuristique {
+        MANHATTAN,
+        EUCLIDIENNE
+    }
+
+    private Heuristique typeHeuristique;
+
+    // Constructeur pour définir l'heuristique
+    public AStar(Heuristique typeHeuristique) {
+        this.typeHeuristique = typeHeuristique;
+    }
+
     /**
      * Trouver le chemin le plus court entre deux cellules dans un graphe en utilisant A*.
      * @param graphe Le graphe représentant le labyrinthe.
@@ -56,9 +69,16 @@ public class AStar {
         return new ArrayList<>();
     }
 
-    // Calculer l'heuristique (distance de Manhattan)
+    // Calculer l'heuristique en fonction du type choisi
     private double calculerHeuristique(Cell courant, Cell arrivee) {
-        return Math.abs(courant.getX() - arrivee.getX()) + Math.abs(courant.getY() - arrivee.getY());
+        switch (typeHeuristique) {
+            case MANHATTAN:
+                return Math.abs(courant.getX() - arrivee.getX()) + Math.abs(courant.getY() - arrivee.getY());
+            case EUCLIDIENNE:
+                return Math.sqrt(Math.pow(courant.getX() - arrivee.getX(), 2) + Math.pow(courant.getY() - arrivee.getY(), 2));
+            default:
+                throw new IllegalArgumentException("Type d'heuristique non reconnu");
+        }
     }
 
     // Reconstruire le chemin à partir des parents
